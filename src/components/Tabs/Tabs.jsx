@@ -1,41 +1,42 @@
-export const Tabs = ({ tabs, activeTabId, onTabSelected }) => {
-  const validTabIds = tabs.map(tab => tab.id);
-  const resolvedActiveId = validTabIds.includes(activeTabId)
-    ? activeTabId
-    : tabs[0].id;
+import React from 'react';
 
-  const activeTab = tabs.find(tab => tab.id === resolvedActiveId);
+export const Tabs = ({ tabs, activeTabId, onTabSelected }) => {
+  const activeTab = tabs.find(tab => tab.id === activeTabId) || tabs[0];
 
   return (
-    <div data-cy="TabsComponent">
+    <>
       <div className="tabs is-boxed">
         <ul>
-          {tabs.map(tab => (
-            <li
-              data-cy="Tab"
-              key={tab.id}
-              className={resolvedActiveId === tab.id ? 'is-active' : ''}
-            >
-              <a
-                href={`#${tab.id}`}
-                data-cy="TabLink"
-                onClick={e => {
-                  e.preventDefault();
-                  if (tab.id !== resolvedActiveId) {
-                    onTabSelected(tab.id);
-                  }
-                }}
+          {tabs.map(tab => {
+            const isActive = tab.id === activeTab.id;
+
+            return (
+              <li
+                key={tab.id}
+                data-cy="Tab"
+                className={isActive ? 'is-active' : ''}
               >
-                {tab.title}
-              </a>
-            </li>
-          ))}
+                <a
+                  href={`#${tab.id}`}
+                  data-cy="TabLink"
+                  onClick={event => {
+                    event.preventDefault();
+                    if (!isActive) {
+                      onTabSelected(tab.id);
+                    }
+                  }}
+                >
+                  {tab.title}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
       <div className="block" data-cy="TabContent">
-        {activeTab?.content}
+        {activeTab.content}
       </div>
-    </div>
+    </>
   );
 };
